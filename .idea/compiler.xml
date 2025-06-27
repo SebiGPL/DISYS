@@ -9,6 +9,7 @@
         <module name="JavaFX" />
         <module name="EnergySpringboot" />
         <module name="CurrentPercentageService" />
+        <module name="UsageService" />
         <module name="EnergyUser" />
         <module name="EnergyProducer" />
       </profile>
@@ -24,7 +25,7 @@
       <module name="EnergySpringboot" options="-parameters" />
       <module name="EnergyUser" options="-parameters" />
       <module name="JavaFX" options="-parameters" />
-      <module name="Test" options="-parameters" />
+      <module name="UsageService" options="-parameters" />
     </option>
   </component>
 </project>

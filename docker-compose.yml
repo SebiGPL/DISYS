@@ -6,9 +6,14 @@ services:
     environment:
       - POSTGRES_USER=disysuser
       - POSTGRES_PASSWORD=disyspw
+    volumes:
+      - db_data:/var/lib/postgresql/data
   
   rabbitmq:
     image: rabbitmq:management-alpine
     ports:
       - '5672:5672'
       - '15672:15672'
+
+volumes:
+  db_data:

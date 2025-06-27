@@ -6,10 +6,10 @@
       <list>
         <option value="$PROJECT_DIR$/CurrentPercentageService/pom.xml" />
         <option value="$PROJECT_DIR$/EnergyUser/pom.xml" />
-        <option value="$PROJECT_DIR$/Test/pom.xml" />
         <option value="$PROJECT_DIR$/EnergyProducer/pom.xml" />
         <option value="$PROJECT_DIR$/JavaFX - GUI/pom.xml" />
         <option value="$PROJECT_DIR$/EnergySpringboot/pom.xml" />
+        <option value="$PROJECT_DIR$/UsageService/pom.xml" />
       </list>
     </option>
   </component>
