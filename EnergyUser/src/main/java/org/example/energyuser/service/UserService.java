@@ -58,5 +58,7 @@ public class UserService {
     public void sendMessage(String message) {
         rabbit.convertAndSend(queueName, message);
         System.out.println("Outgoing User message: " + message);
+        // Logback statt sout um logs und so mitzuschreiben
+        // Logback xml severity googeln
     }
 }

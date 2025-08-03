@@ -1,6 +1,6 @@
 package org.example.usageservice.service;
 
-import org.example.usageservice.repository.EnergyDataEntitiy;
+import org.example.usageservice.repository.EnergyDataEntity;
 import org.example.usageservice.repository.EnergyDatabaseRepository;
 import org.json.JSONObject;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -44,10 +44,10 @@ public class UsageServiceProducer {
 
         // die kWh in die Datenbank speichern
 
-        EnergyDataEntitiy existingEntry = energyDatabaseRepository.findByHour(hour);
+        EnergyDataEntity existingEntry = energyDatabaseRepository.findByHour(hour);
         System.out.println("Bestehender Datenbankeintrag: " + existingEntry);
 
-        EnergyDataEntitiy updatedEntry = calculator.applyProduction(existingEntry, hour, kWh);
+        EnergyDataEntity updatedEntry = calculator.applyProduction(existingEntry, hour, kWh);
         System.out.println("aktualisierter Datenbankeintrag: " + updatedEntry);
 
         energyDatabaseRepository.save(updatedEntry);

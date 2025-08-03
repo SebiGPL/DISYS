@@ -24,7 +24,7 @@
       <module name="EnergyProducer" options="-parameters" />
       <module name="EnergySpringboot" options="-parameters" />
       <module name="EnergyUser" options="-parameters" />
-      <module name="JavaFX" options="-parameters" />
+      <module name="JavaFX" options="" />
       <module name="UsageService" options="-parameters" />
     </option>
   </component>

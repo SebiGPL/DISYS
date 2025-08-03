@@ -1,4 +1,4 @@
-package org.example.usageservice.repository;
+package org.example.energyspringboot.repository;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "community_energy")
-public class EnergyDataEntitiy {
+public class EnergyDataEntity {
 
     @Id
     @Column(name = "hour", nullable = false)
@@ -24,14 +24,14 @@ public class EnergyDataEntitiy {
     @Column(name = "grid_used")
     private double gridUsed;
 
-    public EnergyDataEntitiy(LocalDateTime hour, double communityProduced, double communityUsed, double gridUsed) {
+    public EnergyDataEntity(LocalDateTime hour, double communityProduced, double communityUsed, double gridUsed) {
         this.hour = hour;
         this.communityProduced = communityProduced;
         this.communityUsed = communityUsed;
         this.gridUsed = gridUsed;
     }
 
-    public EnergyDataEntitiy() {
+    public EnergyDataEntity() {
     }
 
     public LocalDateTime getHour() {

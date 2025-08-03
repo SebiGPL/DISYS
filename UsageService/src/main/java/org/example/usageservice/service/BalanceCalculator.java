@@ -1,6 +1,6 @@
 package org.example.usageservice.service;
 
-import org.example.usageservice.repository.EnergyDataEntitiy;
+import org.example.usageservice.repository.EnergyDataEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -8,12 +8,12 @@ import java.time.LocalDateTime;
 @Service
 public class BalanceCalculator {
 
-    public EnergyDataEntitiy applyConsumption(EnergyDataEntitiy existing, LocalDateTime hour, double usedKWh) {
-        EnergyDataEntitiy entry = existing;
+    public EnergyDataEntity applyConsumption(EnergyDataEntity existing, LocalDateTime hour, double usedKWh) {
+        EnergyDataEntity entry = existing;
 
         if (entry == null) {
             // erster Eintrag in dieser Stunde
-            entry = new EnergyDataEntitiy();
+            entry = new EnergyDataEntity();
             entry.setHour(hour);
             entry.setCommunityUsed(0);
             entry.setCommunityProduced(0);
@@ -38,12 +38,12 @@ public class BalanceCalculator {
         return entry;
     }
 
-    public EnergyDataEntitiy applyProduction(EnergyDataEntitiy existing,
-                                             LocalDateTime hour,
-                                             double productionKWh) {
-        EnergyDataEntitiy entry = existing;
+    public EnergyDataEntity applyProduction(EnergyDataEntity existing,
+                                            LocalDateTime hour,
+                                            double productionKWh) {
+        EnergyDataEntity entry = existing;
         if (entry == null) {
-            entry = new EnergyDataEntitiy();
+            entry = new EnergyDataEntity();
             entry.setHour(hour);
             entry.setCommunityUsed(0);
             entry.setCommunityProduced(productionKWh);
