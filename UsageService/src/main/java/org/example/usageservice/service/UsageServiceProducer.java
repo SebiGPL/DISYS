@@ -1,10 +1,11 @@
 package org.example.usageservice.service;
 
 import org.example.usageservice.repository.EnergyDataEntity;
-import org.example.usageservice.repository.EnergyDatabaseRepository;
+import org.example.usageservice.repository.EnergyDataRepository;
 import org.json.JSONObject;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -13,17 +14,19 @@ import java.time.temporal.ChronoUnit;
 
 @Service
 public class UsageServiceProducer {
-    private final EnergyDatabaseRepository energyDatabaseRepository;
+    private final EnergyDataRepository energyDataRepository;
+
+    @Value("${user.queue.name}")
+    private String queueName;
 
     private final BalanceCalculator calculator;
 
-    // weiß noch nicht, ob ich das wirklich brauche
     private final RabbitTemplate rabbit;
 
     private final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd.MM.yyyy'T'HH:mm:ss");
 
-    public UsageServiceProducer(EnergyDatabaseRepository energyDatabaseRepository, BalanceCalculator calculator, RabbitTemplate rabbit) {
-        this.energyDatabaseRepository = energyDatabaseRepository;
+    public UsageServiceProducer(EnergyDataRepository energyDataRepository, BalanceCalculator calculator, RabbitTemplate rabbit) {
+        this.energyDataRepository = energyDataRepository;
         this.calculator = calculator;
         this.rabbit = rabbit;
     }
@@ -43,13 +46,22 @@ public class UsageServiceProducer {
         System.out.println("gesendete Stunde: " + hour);
 
         // die kWh in die Datenbank speichern
-
-        EnergyDataEntity existingEntry = energyDatabaseRepository.findByHour(hour);
+        EnergyDataEntity existingEntry = energyDataRepository.findByHour(hour);
         System.out.println("Bestehender Datenbankeintrag: " + existingEntry);
 
         EnergyDataEntity updatedEntry = calculator.applyProduction(existingEntry, hour, kWh);
         System.out.println("aktualisierter Datenbankeintrag: " + updatedEntry);
 
-        energyDatabaseRepository.save(updatedEntry);
+        energyDataRepository.save(updatedEntry);
+
+        JSONObject updateMessage = new JSONObject();
+
+        updateMessage.put("hour", hour.format(dateFormat));
+        updateMessage.put("communityProduced",updatedEntry.getCommunityProduced());
+        updateMessage.put("communityUsed", updatedEntry.getCommunityUsed());
+        updateMessage.put("gridUsed", updatedEntry.getGridUsed());
+
+        rabbit.convertAndSend(queueName, updateMessage.toString());
+        System.out.println("Nachricht an percentage_mq gesendet:" + updateMessage);
     }
 }

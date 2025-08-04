@@ -1,12 +1,16 @@
 package org.example.energyspringboot.controller;
 
+import org.example.energyspringboot.repository.CurrentPercentageEntity;
+import org.example.energyspringboot.repository.CurrentPercentageRepository;
 import org.example.energyspringboot.repository.EnergyDataEntity;
 import org.example.energyspringboot.repository.EnergyDataRepository;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -15,18 +19,26 @@ import java.time.temporal.ChronoUnit;
 @RequestMapping("/energy")
 public class EnergyController {
 
+    private final CurrentPercentageRepository currentPercentageRepository;
     EnergyDataRepository energyDataRepository;
 
-    public EnergyController(EnergyDataRepository energyDataRepository) {
+    public EnergyController(EnergyDataRepository energyDataRepository, CurrentPercentageRepository currentPercentageRepository) {
         this.energyDataRepository = energyDataRepository;
+        this.currentPercentageRepository = currentPercentageRepository;
     }
 
     @GetMapping("/current")
-    public EnergyDataEntity getCurrentData() {
-        LocalDateTime dateTime = LocalDateTime.now();
-        LocalDateTime hour = dateTime.truncatedTo(ChronoUnit.HOURS);
+    public CurrentPercentageEntity getCurrentData() {
+        LocalDateTime hour = LocalDateTime.now().truncatedTo(ChronoUnit.HOURS);
 
-        return new EnergyDataEntity(hour,9,9,9);
+        CurrentPercentageEntity result = currentPercentageRepository.findByHour(hour);
+        if (result == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "Kein Eintrag für " + hour
+            );
+        }
+        return result;
+
     }
 
     @GetMapping("/historical")

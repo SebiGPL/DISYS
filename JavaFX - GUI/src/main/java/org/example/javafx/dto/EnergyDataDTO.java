@@ -2,9 +2,7 @@ package org.example.javafx.dto;
 
 import java.time.LocalDateTime;
 
-// umbenennen zu Dto
-public class EnergyDataEntity {
-
+public class EnergyDataDTO {
     private LocalDateTime hour;
     private double communityProduced;
     private double communityUsed;

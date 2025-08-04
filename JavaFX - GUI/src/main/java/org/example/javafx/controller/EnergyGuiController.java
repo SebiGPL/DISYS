@@ -1,13 +1,15 @@
 package org.example.javafx.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.DatePicker;
 
 import javafx.scene.control.TextField;
-import org.example.javafx.dto.EnergyDataEntity;
+import org.example.javafx.dto.CurrentPercentageDTO;
+import org.example.javafx.dto.EnergyDataDTO;
 
 import java.net.URI;
 import java.net.URLEncoder;
@@ -40,8 +42,51 @@ public class EnergyGuiController {
     // checken, welcher Port tatsächlich verwendet wird (8080 oder 8081)
     private final String BASE_URL = "http://localhost:8080/energy";
 
+    private final HttpClient client = HttpClient.newHttpClient();
+
+
     @FXML
     public void onRefresh() {
+        String url = BASE_URL + "/current";
+
+        new Thread(() -> {
+            try {
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(URI.create(url))
+                        .GET()
+                        .build();
+                HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+                if (response.statusCode() != 200) {
+                    throw new RuntimeException("HTTP-Fehler: " + response.statusCode());
+                }
+
+                String jsonResponse = response.body();
+
+                ObjectMapper mapper = new ObjectMapper()
+                        .registerModule(new JavaTimeModule());
+                CurrentPercentageDTO data = mapper.readValue(jsonResponse, CurrentPercentageDTO.class);
+
+                Platform.runLater(() -> {
+                    labelCommunityPool.setText(String.format("%.2f %%", data.getCommunityPool()));
+                    labelGridPortion.setText(String.format("%.2f %%", data.getGridPortion()));
+                    labelErrorMessage.setText("");
+
+                });
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                Platform.runLater(() -> {
+                    labelErrorMessage.setText("Fehler beim Datenabruf.");
+                    labelCommunityPool.setText("");
+                    labelGridPortion.setText("");
+                });
+            }
+        }).start();
+
+
+
 
     }
 
@@ -72,7 +117,7 @@ public class EnergyGuiController {
         wird mit new Thread sichergestellt, dass die UI nicht einfriert */
         new Thread(() ->{
             try {
-                HttpClient client = HttpClient.newHttpClient();
+
                 HttpRequest request = HttpRequest.newBuilder()
                         .uri(URI.create(url))
                         .GET()
@@ -88,7 +133,7 @@ public class EnergyGuiController {
 
                 // JSON antwort in eine EnergyDataEntity umwandeln um leichter mit den Rückgabewerten arbeiten zu können
                 ObjectMapper mapper = new ObjectMapper();
-                EnergyDataEntity responseData = mapper.readValue(jsonResponse, EnergyDataEntity.class);
+                EnergyDataDTO responseData = mapper.readValue(jsonResponse, EnergyDataDTO.class);
 
                 Platform.runLater(() -> {
                     labelCommunityProduced.setText(String.format("%.2f kWh", responseData.getCommunityProduced()));
