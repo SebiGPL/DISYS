@@ -8,6 +8,5 @@ Team members include:
 - Philip Zeisler
 
 The git repository for this particular project is:
-+ https://github.com/DonTauren/Distributed-Systems
++ https://github.com/SebiGPL/DISYS
 
-I hope this works better than last time ... 
