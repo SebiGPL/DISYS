@@ -37,12 +37,13 @@ public class CurrentPercentageService {
             double communityUsed = node.get("communityUsed").asDouble();
             double gridUsed = node.get("gridUsed").asDouble();
             double totalConsumption = communityUsed + gridUsed;
+            double communityProduced = node.get("communityProduced").asDouble();
 
             double gridPortion;
             double communityPool;
 
             if (totalConsumption > 0) {
-                communityPool = (communityUsed / totalConsumption) * 100;
+                communityPool = (communityProduced / communityUsed) * 100;
                 gridPortion = (gridUsed / totalConsumption) * 100;
             } else {
                 communityPool = 0.0;
